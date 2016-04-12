@@ -263,7 +263,8 @@ $.widget( "ui.resizable", $.ui.mouse, {
 				axis = $( "<div>" );
 				this._addClass( axis, "ui-resizable-handle " + hname );
 
-				axis.css( { zIndex: o.zIndex } );
+                // Use higher z-indexes for corners
+				axis.css( { zIndex: o.zIndex + ( handle.length - 1 ) } );
 
 				this.handles[ handle ] = ".ui-resizable-" + handle;
 				this.element.append( axis );
