@@ -58,6 +58,10 @@ $.widget( "ui.resizable", $.ui.mouse, {
 		minHeight: 10,
 		minWidth: 10,
 
+		scroll: true,
+		scrollSensitivity: 20,
+		scrollSpeed: 20,
+
 		// See #7960
 		zIndex: 90,
 
@@ -765,7 +769,7 @@ $.widget( "ui.resizable", $.ui.mouse, {
 	},
 
 	_propagate: function( n, event ) {
-		$.ui.plugin.call( this, n, [ event, this.ui() ] );
+		$.ui.plugin.call( this, n, [ event, this.ui(), this ] );
 		( n !== "resize" && this._trigger( n, event, this.ui() ) );
 	},
 
@@ -1186,6 +1190,67 @@ $.ui.plugin.add( "resizable", "grid", {
 		}
 	}
 
+} );
+
+$.ui.plugin.add( "resizable", "scroll", {
+	start: function( event, ui, i ) {
+		if ( !i.scrollParentNotHidden ) {
+			i.scrollParentNotHidden = i.helper.scrollParent( false );
+		}
+
+		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+			i.overflowOffset = i.scrollParentNotHidden.offset();
+		}
+	},
+	resize: function( event, ui, i  ) {
+
+		var o = i.options,
+			scrolled = false,
+			scrollParent = i.scrollParentNotHidden[ 0 ],
+			document = i.document[ 0 ];
+
+		if ( scrollParent !== document && scrollParent.tagName !== "HTML" ) {
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( ( i.overflowOffset.top + scrollParent.offsetHeight ) - event.pageY < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop + o.scrollSpeed;
+				} else if ( event.pageY - i.overflowOffset.top < o.scrollSensitivity ) {
+					scrollParent.scrollTop = scrolled = scrollParent.scrollTop - o.scrollSpeed;
+				}
+			}
+
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( ( i.overflowOffset.left + scrollParent.offsetWidth ) - event.pageX < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft + o.scrollSpeed;
+				} else if ( event.pageX - i.overflowOffset.left < o.scrollSensitivity ) {
+					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft - o.scrollSpeed;
+				}
+			}
+
+		} else {
+
+			if ( !o.axis || o.axis !== "x" ) {
+				if ( event.pageY - $( document ).scrollTop() < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollTop( $( document ).scrollTop() - o.scrollSpeed );
+				} else if ( $( window ).height() - ( event.pageY - $( document ).scrollTop() ) < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollTop( $( document ).scrollTop() + o.scrollSpeed );
+				}
+			}
+
+			if ( !o.axis || o.axis !== "y" ) {
+				if ( event.pageX - $( document ).scrollLeft() < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollLeft( $( document ).scrollLeft() - o.scrollSpeed );
+				} else if ( $( window ).width() - ( event.pageX - $( document ).scrollLeft() ) < o.scrollSensitivity ) {
+					scrolled = $( document ).scrollLeft( $( document ).scrollLeft() + o.scrollSpeed );
+				}
+			}
+
+		}
+
+		if ( scrolled !== false && $.ui.ddmanager && !o.dropBehaviour ) {
+			$.ui.ddmanager.prepareOffsets( i, event );
+		}
+
+	}
 } );
 
 return $.ui.resizable;

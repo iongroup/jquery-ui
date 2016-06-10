@@ -21,11 +21,13 @@
 		$( ".draggable" )
 			.addClass( "ui-widget ui-widget-header ui-corner-all" )
 			.draggable({
-				revert: "invalid"
+				revert: "invalid",
+				scroll: true
 			})
 			.resizable({
 				minHeight: 13,
-				handles: "s"
+				handles: "s",
+				scroll: true
 			});
 		$( ".draggable:last" ).addClass( "absolute" );
 	</script>
