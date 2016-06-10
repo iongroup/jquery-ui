@@ -948,7 +948,7 @@ $.ui.plugin.add( "draggable", "scroll", {
 			document = i.document[ 0 ];
 
 		if ( scrollParent !== document && scrollParent.tagName !== "HTML" ) {
-			if ( !o.axis || o.axis !== "x" ) {
+			if ( o.axis !== "x" && o.scrollAxis !== "x" ) {
 				if ( ( i.overflowOffset.top + scrollParent.offsetHeight ) - event.pageY < o.scrollSensitivity ) {
 					scrollParent.scrollTop = scrolled = scrollParent.scrollTop + o.scrollSpeed;
 				} else if ( event.pageY - i.overflowOffset.top < o.scrollSensitivity ) {
@@ -956,7 +956,7 @@ $.ui.plugin.add( "draggable", "scroll", {
 				}
 			}
 
-			if ( !o.axis || o.axis !== "y" ) {
+			if ( o.axis !== "y" && o.scrollAxis !== "y" ) {
 				if ( ( i.overflowOffset.left + scrollParent.offsetWidth ) - event.pageX < o.scrollSensitivity ) {
 					scrollParent.scrollLeft = scrolled = scrollParent.scrollLeft + o.scrollSpeed;
 				} else if ( event.pageX - i.overflowOffset.left < o.scrollSensitivity ) {
@@ -966,7 +966,7 @@ $.ui.plugin.add( "draggable", "scroll", {
 
 		} else {
 
-			if ( !o.axis || o.axis !== "x" ) {
+			if ( o.axis !== "x" && o.scrollAxis !== "x" ) {
 				if ( event.pageY - $( document ).scrollTop() < o.scrollSensitivity ) {
 					scrolled = $( document ).scrollTop( $( document ).scrollTop() - o.scrollSpeed );
 				} else if ( $( window ).height() - ( event.pageY - $( document ).scrollTop() ) < o.scrollSensitivity ) {
@@ -974,7 +974,7 @@ $.ui.plugin.add( "draggable", "scroll", {
 				}
 			}
 
-			if ( !o.axis || o.axis !== "y" ) {
+			if ( o.axis !== "y" && o.scrollAxis !== "y" ) {
 				if ( event.pageX - $( document ).scrollLeft() < o.scrollSensitivity ) {
 					scrolled = $( document ).scrollLeft( $( document ).scrollLeft() - o.scrollSpeed );
 				} else if ( $( window ).width() - ( event.pageX - $( document ).scrollLeft() ) < o.scrollSensitivity ) {
