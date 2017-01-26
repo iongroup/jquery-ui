@@ -167,7 +167,8 @@ grunt.initConfig({
 				out: "dist/jquery-ui.js",
 				wrap: {
 					start: createBanner( uiFiles ),
-				}
+				},
+				nodeIdCompat: true
 			}
 		}
 	},
