@@ -53,6 +53,14 @@ $.widget( "ui.tabs", {
 		hide: null,
 		show: null,
 
+		// Override show/hide functions
+		showTab: function(el) {
+			return el.show();
+		},
+		hideTab: function(el) {
+			return el.hide();
+		},
+
 		// Callbacks
 		activate: null,
 		beforeActivate: null,
@@ -365,8 +373,7 @@ $.widget( "ui.tabs", {
 			"aria-expanded": "false",
 			tabIndex: -1
 		} );
-		this.panels.not( this._getPanelForTab( this.active ) )
-			.hide()
+		this.options.hideTab( this.panels.not( this._getPanelForTab( this.active ) ) )
 			.attr( {
 				"aria-hidden": "true"
 			} );
@@ -382,8 +389,7 @@ $.widget( "ui.tabs", {
 					tabIndex: 0
 				} );
 			this._addClass( this.active, "ui-tabs-active", "ui-state-active" );
-			this._getPanelForTab( this.active )
-				.show()
+			this.options.showTab( this._getPanelForTab( this.active ) )
 				.attr( {
 					"aria-hidden": "false"
 				} );
@@ -658,7 +664,7 @@ $.widget( "ui.tabs", {
 			if ( toShow.length && that.options.show ) {
 				that._show( toShow, that.options.show, complete );
 			} else {
-				toShow.show();
+				that.options.showTab( toShow );
 				complete();
 			}
 		}
@@ -673,7 +679,7 @@ $.widget( "ui.tabs", {
 		} else {
 			this._removeClass( eventData.oldTab.closest( "li" ),
 				"ui-tabs-active", "ui-state-active" );
-			toHide.hide();
+			this.options.hideTab( toHide );
 			show();
 		}
 
@@ -773,7 +779,7 @@ $.widget( "ui.tabs", {
 			}
 		} );
 
-		this.panels.show();
+		this.options.showTab( this.panels );
 
 		if ( this.options.heightStyle !== "content" ) {
 			this.panels.css( "height", "" );
