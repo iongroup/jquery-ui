@@ -64,6 +64,8 @@ $.widget( "ui.draggable", $.ui.mouse, {
 		snapTolerance: 20,
 		stack: false,
 		zIndex: false,
+		// Link two draggable togheter, dragging the master will move (and raises event) on the linked too.
+		linked: null,
 
 		// Callbacks
 		drag: null,
@@ -212,6 +214,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			return false;
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseStart(event);
+		}
+
 		//Recache the helper size
 		this._cacheHelperProportions();
 
@@ -273,6 +279,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			$.ui.ddmanager.drag( this, event );
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseDrag(event, noPropagation);
+		}
+
 		return false;
 	},
 
@@ -303,6 +313,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			}
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseStop(event);
+		}
+
 		return false;
 	},
 
@@ -319,6 +333,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 			// The interaction is over; whether or not the click resulted in a drag, focus the element
 			this.element.trigger( "focus" );
+		}
+
+		if (this.options.linked) {
+			this.options.linked._mouseUp(event);
 		}
 
 		return $.ui.mouse.prototype._mouseUp.call( this, event );

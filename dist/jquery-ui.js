@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d5 - 2017-12-11
+/*! jQuery UI - v1.12.0-pre-d6 - 2018-03-12
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -10047,6 +10047,8 @@ $.widget( "ui.draggable", $.ui.mouse, {
 		snapTolerance: 20,
 		stack: false,
 		zIndex: false,
+		// Link two draggable togheter, dragging the master will move (and raises event) on the linked too.
+		linked: null,
 
 		// Callbacks
 		drag: null,
@@ -10195,6 +10197,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			return false;
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseStart(event);
+		}
+
 		//Recache the helper size
 		this._cacheHelperProportions();
 
@@ -10256,6 +10262,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			$.ui.ddmanager.drag( this, event );
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseDrag(event, noPropagation);
+		}
+
 		return false;
 	},
 
@@ -10286,6 +10296,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 			}
 		}
 
+		if (this.options.linked) {
+			this.options.linked._mouseStop(event);
+		}
+
 		return false;
 	},
 
@@ -10302,6 +10316,10 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 			// The interaction is over; whether or not the click resulted in a drag, focus the element
 			this.element.trigger( "focus" );
+		}
+
+		if (this.options.linked) {
+			this.options.linked._mouseUp(event);
 		}
 
 		return $.ui.mouse.prototype._mouseUp.call( this, event );

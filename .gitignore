@@ -1,3 +1,4 @@
 node_modules
 .sizecache.json
 minified
+/package-lock.json
