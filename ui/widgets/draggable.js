@@ -917,16 +917,19 @@ $.ui.plugin.add( "draggable", "cursor", {
 	start: function( event, ui, instance ) {
 		var t = $( "body" ),
 			o = instance.options;
-
-		if ( t.css( "cursor" ) ) {
-			o._cursor = t.css( "cursor" );
+		if (!o.linked) {
+			if ( t.css( "cursor" ) ) {
+				o._cursor = t.css( "cursor" );
+			}
+			t.css( "cursor", o.cursor );
 		}
-		t.css( "cursor", o.cursor );
 	},
 	stop: function( event, ui, instance ) {
 		var o = instance.options;
-		if ( o._cursor ) {
-			$( "body" ).css( "cursor", o._cursor );
+		if (!o.linked) {
+			if ( o._cursor ) {
+				$( "body" ).css( "cursor", o._cursor );
+			}
 		}
 	}
 } );
@@ -935,30 +938,39 @@ $.ui.plugin.add( "draggable", "opacity", {
 	start: function( event, ui, instance ) {
 		var t = $( ui.helper ),
 			o = instance.options;
-		if ( t.css( "opacity" ) ) {
-			o._opacity = t.css( "opacity" );
+		if (!o.linked) {
+			if ( t.css( "opacity" ) ) {
+				o._opacity = t.css( "opacity" );
+			}
+			t.css( "opacity", o.opacity );
 		}
-		t.css( "opacity", o.opacity );
 	},
 	stop: function( event, ui, instance ) {
 		var o = instance.options;
-		if ( o._opacity ) {
-			$( ui.helper ).css( "opacity", o._opacity );
+		if (!o.linked) {
+			if ( o._opacity ) {
+				$( ui.helper ).css( "opacity", o._opacity );
+			}
 		}
 	}
 } );
 
 $.ui.plugin.add( "draggable", "scroll", {
 	start: function( event, ui, i ) {
-		if ( !i.scrollParentNotHidden ) {
-			i.scrollParentNotHidden = i.helper.scrollParent( false );
-		}
+		if (!i.options.linked) {
+			if ( !i.scrollParentNotHidden ) {
+				i.scrollParentNotHidden = i.helper.scrollParent( false );
+			}
 
-		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
-			i.overflowOffset = i.scrollParentNotHidden.offset();
+			if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+				i.overflowOffset = i.scrollParentNotHidden.offset();
+			}
 		}
 	},
 	drag: function( event, ui, i  ) {
+		if (i.options.linked) {
+			return;
+		}
 
 		var o = i.options,
 			scrolled = false,

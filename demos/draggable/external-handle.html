@@ -35,7 +35,7 @@
 
 		// The item is draggable but not directly (stop mouse capture)
 		$( "#draggable" ).draggable({ 
-			//cancel: "#draggable",
+			cursor: "move",
 			start: function() {
 				counts[ 0 ]++;
 				updateCounterStatus( $start_counter, counts[ 0 ] );
@@ -51,7 +51,6 @@
 		});
 		// The handle is draggable
 		$( "#draggable-handle" ).draggable({ 
-			cursor: "move",
 			linked: $( "#draggable" ).draggable("instance")
 		});
 

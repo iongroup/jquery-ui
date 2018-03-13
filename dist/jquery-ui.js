@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d6 - 2018-03-12
+/*! jQuery UI - v1.12.0-pre-d7 - 2018-03-13
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -10900,16 +10900,19 @@ $.ui.plugin.add( "draggable", "cursor", {
 	start: function( event, ui, instance ) {
 		var t = $( "body" ),
 			o = instance.options;
-
-		if ( t.css( "cursor" ) ) {
-			o._cursor = t.css( "cursor" );
+		if (!o.linked) {
+			if ( t.css( "cursor" ) ) {
+				o._cursor = t.css( "cursor" );
+			}
+			t.css( "cursor", o.cursor );
 		}
-		t.css( "cursor", o.cursor );
 	},
 	stop: function( event, ui, instance ) {
 		var o = instance.options;
-		if ( o._cursor ) {
-			$( "body" ).css( "cursor", o._cursor );
+		if (!o.linked) {
+			if ( o._cursor ) {
+				$( "body" ).css( "cursor", o._cursor );
+			}
 		}
 	}
 } );
@@ -10918,30 +10921,39 @@ $.ui.plugin.add( "draggable", "opacity", {
 	start: function( event, ui, instance ) {
 		var t = $( ui.helper ),
 			o = instance.options;
-		if ( t.css( "opacity" ) ) {
-			o._opacity = t.css( "opacity" );
+		if (!o.linked) {
+			if ( t.css( "opacity" ) ) {
+				o._opacity = t.css( "opacity" );
+			}
+			t.css( "opacity", o.opacity );
 		}
-		t.css( "opacity", o.opacity );
 	},
 	stop: function( event, ui, instance ) {
 		var o = instance.options;
-		if ( o._opacity ) {
-			$( ui.helper ).css( "opacity", o._opacity );
+		if (!o.linked) {
+			if ( o._opacity ) {
+				$( ui.helper ).css( "opacity", o._opacity );
+			}
 		}
 	}
 } );
 
 $.ui.plugin.add( "draggable", "scroll", {
 	start: function( event, ui, i ) {
-		if ( !i.scrollParentNotHidden ) {
-			i.scrollParentNotHidden = i.helper.scrollParent( false );
-		}
+		if (!i.options.linked) {
+			if ( !i.scrollParentNotHidden ) {
+				i.scrollParentNotHidden = i.helper.scrollParent( false );
+			}
 
-		if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
-			i.overflowOffset = i.scrollParentNotHidden.offset();
+			if ( i.scrollParentNotHidden[ 0 ] !== i.document[ 0 ] && i.scrollParentNotHidden[ 0 ].tagName !== "HTML" ) {
+				i.overflowOffset = i.scrollParentNotHidden.offset();
+			}
 		}
 	},
 	drag: function( event, ui, i  ) {
+		if (i.options.linked) {
+			return;
+		}
 
 		var o = i.options,
 			scrolled = false,
