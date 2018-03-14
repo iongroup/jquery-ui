@@ -111,6 +111,9 @@ $.widget( "ui.draggable", $.ui.mouse, {
 		if ( this.helper || o.disabled || $( event.target ).closest( ".ui-resizable-handle" ).length > 0 ) {
 			return false;
 		}
+		if (o.linked && o.linked.options.disabled) {
+			return false;
+		}
 
 		//Quit if we're not on a valid handle
 		this.handle = this._getHandle( event );

@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d7 - 2018-03-13
+/*! jQuery UI - v1.12.0-pre-d8 - 2018-03-14
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -10092,6 +10092,9 @@ $.widget( "ui.draggable", $.ui.mouse, {
 
 		// Among others, prevent a drag on a resizable-handle
 		if ( this.helper || o.disabled || $( event.target ).closest( ".ui-resizable-handle" ).length > 0 ) {
+			return false;
+		}
+		if (o.linked && o.linked.options.disabled) {
 			return false;
 		}
 

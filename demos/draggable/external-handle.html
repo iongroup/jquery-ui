@@ -64,6 +64,16 @@
 			$( "span.count", $event_counter ).text( new_count );
 		}
 	</script>
+	<script>
+		function onDisableChanged() {
+			if (document.getElementById("disablechk").checked) {
+				$( "#draggable" ).draggable("disable");
+			} else {
+				$( "#draggable" ).draggable("enable");
+			}
+		}
+	</script>
+	
 </head>
 <body>
 
@@ -83,5 +93,7 @@
 <div class="demo-description">
 <p>This sample show how to drag an object from an handle that is in a different DOM tree structure.</p>
 </div>
+<input type="checkbox" id="disablechk" onchange="onDisableChanged()" /> Disable
+
 </body>
 </html>
