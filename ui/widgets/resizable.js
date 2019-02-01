@@ -285,7 +285,10 @@ $.widget( "ui.resizable", $.ui.mouse, {
 			for ( i in this.handles ) {
 
 				if ( this.handles[ i ].constructor === String ) {
-					this.handles[ i ] = this.element.children( this.handles[ i ] ).first().show();
+					// This will breaks inline CSS style to show/hide the resizers. Don't use show() if not auto-hide.
+					if ( o.autoHide ) {
+						this.handles[ i ] = this.element.children( this.handles[ i ] ).first().show();
+					}
 				} else if ( this.handles[ i ].jquery || this.handles[ i ].nodeType ) {
 					this.handles[ i ] = $( this.handles[ i ] );
 					this._on( this.handles[ i ], { "mousedown": that._mouseDown } );

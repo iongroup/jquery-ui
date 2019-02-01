@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d8 - 2018-03-14
+/*! jQuery UI - v1.12.0-pre-d9 - 2019-02-01
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -11428,7 +11428,10 @@ $.widget( "ui.resizable", $.ui.mouse, {
 			for ( i in this.handles ) {
 
 				if ( this.handles[ i ].constructor === String ) {
-					this.handles[ i ] = this.element.children( this.handles[ i ] ).first().show();
+					// This will breaks inline CSS style to show/hide the resizers. Don't use show() if not auto-hide.
+					if ( o.autoHide ) {
+						this.handles[ i ] = this.element.children( this.handles[ i ] ).first().show();
+					}
 				} else if ( this.handles[ i ].jquery || this.handles[ i ].nodeType ) {
 					this.handles[ i ] = $( this.handles[ i ] );
 					this._on( this.handles[ i ], { "mousedown": that._mouseDown } );
