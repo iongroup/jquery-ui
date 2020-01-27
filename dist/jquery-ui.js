@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d9 - 2020-01-27
+/*! jQuery UI - v1.12.0-pre-d10 - 2020-01-27
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -17661,6 +17661,10 @@ $.widget( "ui.tabs", {
 
 		return function( anchor ) {
 			var anchorUrl, locationUrl;
+
+			// localHref data attribute added to provide jquery-ui tabs without using href attribute.
+			//This prevents the visibility of sttaus bar in bootom corner browsers with local URLs 
+
 			const anchorLocalHrefData = anchor.dataset.localHref;
 			if( anchorLocalHrefData && anchorLocalHrefData!== "" ){
 				return true;
@@ -18333,7 +18337,7 @@ $.widget( "ui.tabs", {
 
 		// meta-function to give users option to provide a href string instead of a numerical index.
 		if ( typeof index === "string" ) {
-			index = this.anchors.index( this.anchors.filter( "[href$='" + $.ui.escapeSelector( index ) + "']" ) );
+			index = this.anchors.index( this.anchors.filter( "[href$='" + $.ui.escapeSelector( index ) + "'], [data-local-href$='" + $.ui.escapeSelector( index ) + "']" ) );
 		}
 
 		return index;
