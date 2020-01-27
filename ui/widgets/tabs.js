@@ -74,18 +74,28 @@ $.widget( "ui.tabs", {
 		return function( anchor ) {
 			var anchorUrl, locationUrl;
 
-			anchorUrl = anchor.href.replace( rhash, "" );
-			locationUrl = location.href.replace( rhash, "" );
+			// localHref data attribute added to provide jquery-ui tabs without using href attribute.
+			//This prevents the visibility of sttaus bar in bootom corner browsers with local URLs 
 
-			// Decoding may throw an error if the URL isn't UTF-8 (#9518)
-			try {
-				anchorUrl = decodeURIComponent( anchorUrl );
-			} catch ( error ) {}
-			try {
-				locationUrl = decodeURIComponent( locationUrl );
-			} catch ( error ) {}
+			const anchorLocalHrefData = anchor.dataset.localHref;
+			if( anchorLocalHrefData && anchorLocalHrefData!== "" ){
+				return true;
+			}
+			else {
+				anchorUrl = anchor.href.replace( rhash, "" );
+				locationUrl = location.href.replace( rhash, "" );
+	
+				// Decoding may throw an error if the URL isn't UTF-8 (#9518)
+				try {
+					anchorUrl = decodeURIComponent( anchorUrl );
+				} catch ( error ) {}
+				try {
+					locationUrl = decodeURIComponent( locationUrl );
+				} catch ( error ) {}
+	
+				return anchor.hash.length > 1 && anchorUrl === locationUrl;
+			}
 
-			return anchor.hash.length > 1 && anchorUrl === locationUrl;
 		};
 	} )(),
 
@@ -325,7 +335,7 @@ $.widget( "ui.tabs", {
 
 	refresh: function() {
 		var options = this.options,
-			lis = this.tablist.children( ":has(a[href])" );
+			lis = this.tablist.children( ":has(a[href], a[data-local-href])" );
 
 		// Get disabled tabs from class attribute from HTML
 		// this will get converted to a boolean if needed in _refresh()
@@ -426,7 +436,7 @@ $.widget( "ui.tabs", {
 				}
 			} );
 
-		this.tabs = this.tablist.find( "> li:has(a[href])" )
+		this.tabs = this.tablist.find( "> li:has(a[href], a[data-local-href])" )
 			.attr( {
 				role: "tab",
 				tabIndex: -1
@@ -452,7 +462,7 @@ $.widget( "ui.tabs", {
 
 			// Inline tab
 			if ( that._isLocal( anchor ) ) {
-				selector = anchor.hash;
+				selector = anchor.hash || anchor.dataset.localHref;
 				panelId = selector.substring( 1 );
 				panel = that.element.find( that._sanitizeSelector( selector ) );
 
@@ -739,7 +749,7 @@ $.widget( "ui.tabs", {
 
 		// meta-function to give users option to provide a href string instead of a numerical index.
 		if ( typeof index === "string" ) {
-			index = this.anchors.index( this.anchors.filter( "[href$='" + $.ui.escapeSelector( index ) + "']" ) );
+			index = this.anchors.index( this.anchors.filter( "[href$='" + $.ui.escapeSelector( index ) + "'], [data-local-href$='" + $.ui.escapeSelector( index ) + "']" ) );
 		}
 
 		return index;

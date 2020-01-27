@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.0-pre-d9 - 2019-02-01
+/*! jQuery UI - v1.12.0-pre-d9 - 2020-01-27
 * http://jqueryui.com
 * Includes: core.js, widget.js, mouse.js, draggable.js, droppable.js, resizable.js, selectable.js, sortable.js, effect.js, data.js, disable-selection.js, escape-selector.js, focusable.js, form-reset-mixin.js, form.js, ie.js, jquery-1-7.js, keycode.js, labels.js, plugin.js, position.js, safe-active-element.js, safe-blur.js, scroll-parent.js, tabbable.js, unique-id.js, version.js
 * Copyright jQuery Foundation and other contributors; Licensed  */
@@ -17661,19 +17661,25 @@ $.widget( "ui.tabs", {
 
 		return function( anchor ) {
 			var anchorUrl, locationUrl;
+			const anchorLocalHrefData = anchor.dataset.localHref;
+			if( anchorLocalHrefData && anchorLocalHrefData!== "" ){
+				return true;
+			}
+			else {
+				anchorUrl = anchor.href.replace( rhash, "" );
+				locationUrl = location.href.replace( rhash, "" );
+	
+				// Decoding may throw an error if the URL isn't UTF-8 (#9518)
+				try {
+					anchorUrl = decodeURIComponent( anchorUrl );
+				} catch ( error ) {}
+				try {
+					locationUrl = decodeURIComponent( locationUrl );
+				} catch ( error ) {}
+	
+				return anchor.hash.length > 1 && anchorUrl === locationUrl;
+			}
 
-			anchorUrl = anchor.href.replace( rhash, "" );
-			locationUrl = location.href.replace( rhash, "" );
-
-			// Decoding may throw an error if the URL isn't UTF-8 (#9518)
-			try {
-				anchorUrl = decodeURIComponent( anchorUrl );
-			} catch ( error ) {}
-			try {
-				locationUrl = decodeURIComponent( locationUrl );
-			} catch ( error ) {}
-
-			return anchor.hash.length > 1 && anchorUrl === locationUrl;
 		};
 	} )(),
 
@@ -17913,7 +17919,7 @@ $.widget( "ui.tabs", {
 
 	refresh: function() {
 		var options = this.options,
-			lis = this.tablist.children( ":has(a[href])" );
+			lis = this.tablist.children( ":has(a[href], a[data-local-href])" );
 
 		// Get disabled tabs from class attribute from HTML
 		// this will get converted to a boolean if needed in _refresh()
@@ -18014,7 +18020,7 @@ $.widget( "ui.tabs", {
 				}
 			} );
 
-		this.tabs = this.tablist.find( "> li:has(a[href])" )
+		this.tabs = this.tablist.find( "> li:has(a[href], a[data-local-href])" )
 			.attr( {
 				role: "tab",
 				tabIndex: -1
@@ -18040,7 +18046,7 @@ $.widget( "ui.tabs", {
 
 			// Inline tab
 			if ( that._isLocal( anchor ) ) {
-				selector = anchor.hash;
+				selector = anchor.hash || anchor.dataset.localHref;
 				panelId = selector.substring( 1 );
 				panel = that.element.find( that._sanitizeSelector( selector ) );
 
